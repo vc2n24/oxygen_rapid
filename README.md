@@ -1,6 +1,6 @@
 # oxygen_rapid
 ------------------------------------------------------------------
------------------Scripts------------------------------------------
+Scripts
 Each script should contain:
 # the source code citation 
 #general descriprion of what it is useful for 
@@ -9,7 +9,8 @@ Each script should contain:
 
 
 ------------------------------------------------------------------
----------------Data Files ----------------------------------------
+Data Files 
+
 Each data file should:
 #have a README file associated with the same name with info on:
 - how data were collected and when
