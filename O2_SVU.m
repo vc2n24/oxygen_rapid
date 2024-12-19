@@ -37,20 +37,22 @@ o2coef_c0 = -3.11680E-7;
 SA = gsw_SA_from_SP(psal, pres, lon, lat); % Calculates Absolute Salinity from Practical Salinity, pressure, longitude, and latitude.
 CT = gsw_CT_from_t(SA, temp, pres); % Converts in-situ temperature to Conservative Temperature using Absolute Salinity and pressure.
 O2eq = gsw_O2sol(SA, CT, pres, lon, lat); % Computes equilibrium oxygen solubility in seawater.rho0 = 1000 + gsw_sigma0(SA, CT); % Calculates in-situ density anomaly from Absolute Salinity and Conservative Temperature.
+rho0 = 1000 + gsw_sigma0(SA, CT);
 
 %SVU calibration
-Ksv = SVU_coef(1) + SVU_coef(2)*temp + SVU_coef(3)*temp^2; % Temperature-dependent calibration factor for O2 sensitivity. 
-P0 = SVU_coef(4) + SVU_coef(5)*temp; % Temperature-dependent phase offset.
-PC = SVU_coef(6) + SVU_coef(7) * calphase; % Calibration phase factor dependent on input calibrated phase.
-optode_uM = ((P0 / PC) - 1) / Ksv; % Calculated oxygen concentration in micromolar units based on calibration.
+Ksv = SVU_coef(1) + SVU_coef(2).*temp + SVU_coef(3).*temp.^2; % Temperature-dependent calibration factor for O2 sensitivity. 
+P0 = SVU_coef(4) + SVU_coef(5).*temp; % Temperature-dependent phase offset.
+PC = SVU_coef(6) + SVU_coef(7).* calphase; % Calibration phase factor dependent on input calibrated phase.
+optode_uM = ((P0 ./ PC) - 1) ./ Ksv; % Calculated oxygen concentration in micromolar units based on calibration.
 
 % Scaled temperature
-temps = log((K0 + 25 - temp) / (K0 + temp)); % Computes a scaled logarithmic temperature used in salinity correction.
+temps = log((K0 + 25 - temp) ./ (K0 + temp)); % Computes a scaled logarithmic temperature used in salinity correction.
 
 % Salinity correction
-Scorr = exp((psal - S0) * polyval(o2coef_b, temps) + o2coef_c0 * (psal^2 - S0^2)); % Adjusts oxygen concentration for salinity differences.
+Scorr = exp((psal - S0) .* polyval(o2coef_b, temps) + o2coef_c0 .* (psal.^2 - S0^2)); % Adjusts oxygen concentration for salinity differences.
 
 % Oxygen concentration calculation
-O2 = 1000 * Scorr * optode_uM / rho0; % Final O2 concentration in umol/kg, normalized by density.
+O2 = 1000 * Scorr .* optode_uM ./ rho0; % Final O2 concentration in umol/kg, normalized by density.
+return 
 
 end
